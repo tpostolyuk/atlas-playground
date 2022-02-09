@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/GreenOpsInc/atlasexamples.git
+    repoURL: https://github.com/mihirpandya-greenops/atlasexamples.git
     targetRevision: main
     path: basic/argo_manifest
   destination:
