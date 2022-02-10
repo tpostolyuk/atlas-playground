@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: atlastestapp-dev
   namespace: argocd
+  annotations:
+    atlas-argo-sync-prune: "true"
 spec:
   project: default
   source:
