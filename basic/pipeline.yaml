@@ -16,4 +16,4 @@ steps:
     commands: [sh, -c, ./verifyendpoints.sh]
     before: false
     variables:
-      SERVICE_INTERNAL_URL: testapp.dev.svc.cluster.local
+      SERVICE_INTERNAL_URL: testapp.dev.svc.cluster.loca
