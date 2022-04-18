@@ -1,5 +1,5 @@
 metadata:
-  name: wonderful-poochenheimer
+  generateName: tester-
   namespace: argo
   labels:
     example: 'true'
