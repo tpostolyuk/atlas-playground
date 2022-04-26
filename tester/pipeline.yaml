@@ -8,8 +8,54 @@ spec:
     parameters:
       - name: message
         value: hello argo
-  entrypoint: argosay
+  entrypoint: argocd-sync-and-wait
   templates:
+    - name: argocd-sync-and-wait
+    inputs:
+      parameters:
+      - name: argocd-version
+        value: v1.6.0
+      - name: application-name
+      - atlastestapp-dev
+      - name: revision
+        value: main
+      - name: flags
+        value: --
+      - name: argocd-server-address
+        value: 192.168.64.2:31907
+      - name: argocd-credentials-secret
+        value: argocd-credentials-secret
+    script:
+      image: argoproj/argocd:{{inputs.parameters.argocd-version}}
+      command: [bash]
+      env:
+        - name: ARGOCD_AUTH_TOKEN
+          value: ""
+        - name: ARGOCD_USERNAME
+          value: admin
+        - name: ARGOCD_PASSWORD
+          value: N39sRGJSPPtNHRk7
+        - name: ARGOCD_SERVER
+          value: "{{inputs.parameters.argocd-server-address}}"
+      source: |
+        #!/bin/bash
+
+        set -euo pipefail
+
+        if [[ -z $ARGOCD_AUTH_TOKEN ]] && [[ -z "$ARGOCD_USERNAME" || -z "$ARGOCD_PASSWORD" ]]; then
+          echo "Either the ARGOCD_AUTH_TOKEN must be specified, or the ARGOCD_USERNAME/ARGOCD_PASSWORD must be specified."
+          exit 1
+        fi 
+
+        if [ -z $ARGOCD_AUTH_TOKEN ]; then
+          yes | argocd login "$ARGOCD_SERVER" --username=$ARGOCD_USERNAME --password=$ARGOCD_PASSWORD {{inputs.parameters.flags}} || echo ${PIPESTATUS[@]}
+        fi
+
+        echo "Running as ArgoCD User:"
+        argocd account get-user-info {{inputs.parameters.flags}}
+        
+        argocd app sync {{inputs.parameters.application-name}} --revision {{inputs.parameters.revision}} {{inputs.parameters.flags}}
+        argocd app wait {{inputs.parameters.application-name}} --health {{inputs.parameters.flags}}
     - name: argosay
       inputs:
         parameters:
