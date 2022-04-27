@@ -8,15 +8,19 @@ spec:
     parameters:
       - name: message
         value: hello argo
-  entrypoint: argocd-sync-and-wait
+  entrypoint: starter
   templates:
-    - name: argocd-sync-and-wait
+  - name: starter
+    steps:
+    - - name: build
+        template: argocd-sync-and-wait
+  - name: argocd-sync-and-wait
     inputs:
       parameters:
       - name: argocd-version
         value: v1.6.0
       - name: application-name
-      - atlastestapp-dev
+        value: atlastestapp-dev
       - name: revision
         value: main
       - name: flags
@@ -56,20 +60,3 @@ spec:
         
         argocd app sync {{inputs.parameters.application-name}} --revision {{inputs.parameters.revision}} {{inputs.parameters.flags}}
         argocd app wait {{inputs.parameters.application-name}} --health {{inputs.parameters.flags}}
-    - name: argosay
-      inputs:
-        parameters:
-          - name: message
-            value: '{{workflow.parameters.message}}'
-      container:
-        name: main
-        image: 'argoproj/argosay:v2'
-        command:
-          - /argosay
-        args:
-          - echo
-          - '{{inputs.parameters.message}}'
-  ttlStrategy:
-    secondsAfterCompletion: 300
-  podGC:
-    strategy: OnPodCompletion
