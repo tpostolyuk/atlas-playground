@@ -2,7 +2,7 @@ metadata:
   generateName: tester-
   namespace: argo
   labels:
-    example: 'true'
+    clusterName: 'hubcluster'
 spec:
   arguments:
     parameters:
